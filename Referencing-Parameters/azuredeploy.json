@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sitename": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "sitename must be globally unique"
+      }
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[parameters('sitename')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "WebPlanCreator"
+      ],
+      "tags": {
+      },
+      "properties": {
+        "name": "[parameters('sitename')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', reference('WebPlanCreator').outputs.websitePlanName.value)]"
+      }
+    },
+    {
+      "name": "WebPlanCreator",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-02-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://alystorage.blob.core.windows.net/arm/webplan.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "sitename":{"value": "[parameters('sitename')]"}
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "sitename": {
+      "type": "string",
+      "minLength": 1
+    },
+    "myplanSkuName": {
+      "type": "string",
+      "defaultValue": "F1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    }
+  },
+  "variables": {
+    "websitePlanName": "[concat(parameters('sitename'), 'plan')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('websitePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "sku": {
+        "name": "[parameters('myplanSkuName')]"
+      },
+      "dependsOn": [],
+      "tags": {
+        "displayName": "myplan"
+      },
+      "properties": {
+        "name": "[variables('websitePlanName')]",
+        "numberOfWorkers": 1
+      }
+    }
+  ],
+  "outputs": {
+    "websitePlanName": {
+      "type": "string",
+      "value": "[variables('websitePlanName')]"
+    }
+  }
+}
